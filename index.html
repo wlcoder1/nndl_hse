@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Banking Fraud Detection - Advanced Neural Network</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tensorflow/4.2.0/tf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏦 Advanced Banking Fraud Detection System</h1>
+            <p>Neural Network Comparison & Deep EDA</p>
+        </div>
+
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('data')">📊 Advanced EDA</button>
+            <button class="tab" onclick="showTab('model')">🧠 Model Comparison</button>
+            <button class="tab" onclick="showTab('predict')">🔍 Predict</button>
+            <button class="tab" onclick="showTab('insights')">💡 Key Insights</button>
+        </div>
+
+        <div class="content">
+            <!-- Advanced EDA Tab -->
+            <div id="data" class="tab-content active">
+                <h2>Advanced Exploratory Data Analysis</h2>
+                
+                <div class="input-group" style="max-width: 300px;">
+                    <label>Select Dataset Size</label>
+                    <select id="datasetSize">
+                        <option value="1000">1,000 records</option>
+                        <option value="5000" selected>5,000 records</option>
+                        <option value="10000">10,000 records</option>
+                        <option value="20000">20,000 records</option>
+                        <option value="50000">50,000 records</option>
+                    </select>
+                </div>
+                
+                <button onclick="generateData()">🎲 Generate Dataset</button>
+                <button onclick="downloadCSV('train')">📥 Download Training CSV</button>
+                <button onclick="downloadCSV('test')">📥 Download Test CSV</button>
+                
+                <div class="grid">
+                    <div class="card">
+                        <h3>Dataset Overview</h3>
+                        <p>Total Records: <span class="stat" id="totalRecords">0</span></p>
+                        <p>Features: <span class="stat">8</span></p>
+                        <p>Fraud Rate: <span class="stat" id="fraudRate">0%</span></p>
+                    </div>
+                    <div class="card">
+                        <h3>Class Distribution</h3>
+                        <p>Legitimate: <span class="stat" id="legitCount">0</span></p>
+                        <p>Fraudulent: <span class="stat" id="fraudCount">0</span></p>
+                    </div>
+                    <div class="card">
+                        <h3>Data Quality</h3>
+                        <p>Missing Values: <span class="stat">0</span></p>
+                        <p>Duplicates: <span class="stat">0</span></p>
+                        <p>Quality Score: <span class="stat">100%</span></p>
+                    </div>
+                </div>
+
+                <div class="eda-section">
+                    <h3>📈 Descriptive Statistics - Fraudulent Transactions</h3>
+                    <div class="statistics-grid" id="fraudStats"></div>
+                </div>
+
+                <div class="eda-section">
+                    <h3>📉 Descriptive Statistics - Legitimate Transactions</h3>
+                    <div class="statistics-grid" id="legitStats"></div>
+                </div>
+
+                <h3>Distribution Analysis</h3>
+                <div class="chart-container">
+                    <canvas id="distributionChart"></canvas>
+                </div>
+
+                <div class="grid">
+                    <div class="chart-container small">
+                        <canvas id="amountDistChart"></canvas>
+                    </div>
+                    <div class="chart-container small">
+                        <canvas id="timeDistChart"></canvas>
+                    </div>
+                </div>
+
+                <h3>Correlation & Pattern Analysis</h3>
+                <div class="chart-container">
+                    <canvas id="fraudRateChart"></canvas>
+                </div>
+
+                <div class="grid">
+                    <div class="chart-container small">
+                        <canvas id="distanceChart"></canvas>
+                    </div>
+                    <div class="chart-container small">
+                        <canvas id="frequencyChart"></canvas>
+                    </div>
+                </div>
+
+                <h3>Outlier Detection & Box Plot Analysis</h3>
+                <div class="chart-container">
+                    <canvas id="boxPlotChart"></canvas>
+                </div>
+
+                <h3>Sample Data (First 10 Records)</h3>
+                <div style="overflow-x: auto;">
+                    <table id="sampleTable">
+                        <thead>
+                            <tr>
+                                <th>Amount</th>
+                                <th>Hour</th>
+                                <th>Day</th>
+                                <th>Merchant</th>
+                                <th>Distance</th>
+                                <th>Frequency</th>
+                                <th>Age</th>
+                                <th>Balance</th>
+                                <th>Fraud</th>
+                            </tr>
+                        </thead>
+                        <tbody id="sampleBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Model Comparison Tab -->
+            <div id="model" class="tab-content">
+                <h2>Neural Network Model Comparison</h2>
+                
+                <p>Select models to train and compare (click to select/deselect):</p>
+                
+                <div class="model-comparison" id="modelSelection">
+                    <div class="model-card" data-model="shallow">
+                        <h4>Shallow Network</h4>
+                        <p style="font-size: 12px;">1 Hidden Layer (8 neurons)</p>
+                        <p style="font-size: 11px; margin-top: 5px;">Fast & Simple</p>
+                    </div>
+                    <div class="model-card" data-model="medium">
+                        <h4>Medium Network</h4>
+                        <p style="font-size: 12px;">2 Hidden Layers (16-8)</p>
+                        <p style="font-size: 11px; margin-top: 5px;">Balanced</p>
+                    </div>
+                    <div class="model-card" data-model="deep">
+                        <h4>Deep Network</h4>
+                        <p style="font-size: 12px;">3 Hidden Layers (32-16-8)</p>
+                        <p style="font-size: 11px; margin-top: 5px;">Complex</p>
+                    </div>
+                    <div class="model-card" data-model="wide">
+                        <h4>Wide Network</h4>
+                        <p style="font-size: 12px;">2 Hidden Layers (64-32)</p>
+                        <p style="font-size: 11px; margin-top: 5px;">High Capacity</p>
+                    </div>
+                </div>
+
+                <button onclick="trainAllModels()" id="trainBtn">🚀 Train Selected Models (30 epochs)</button>
+                
+                <div class="progress">
+                    <div class="progress-bar" id="trainingProgress" style="width: 0%">0%</div>
+                </div>
+
+                <h3>Model Performance Comparison</h3>
+                <div class="grid" id="modelResults"></div>
+
+                <div class="chart-container">
+                    <canvas id="comparisonChart"></canvas>
+                </div>
+
+                <h3>Best Model Training History</h3>
+                <div class="chart-container">
+                    <canvas id="trainingChart"></canvas>
+                </div>
+
+                <h3>Training Log</h3>
+                <div class="log" id="trainingLog"></div>
+            </div>
+
+            <!-- Predict Tab -->
+            <div id="predict" class="tab-content">
+                <h2>Transaction Fraud Prediction</h2>
+                
+                <div class="card">
+                    <h3>Active Model: <span id="activeModel" style="color: #764ba2;">None</span></h3>
+                </div>
+                
+                <div class="grid">
+                    <div class="input-group">
+                        <label>Transaction Amount ($)</label>
+                        <input type="number" id="amount" value="150.50" step="0.01">
+                    </div>
+                    <div class="input-group">
+                        <label>Hour of Day (0-23)</label>
+                        <input type="number" id="hour" value="14" min="0" max="23">
+                    </div>
+                    <div class="input-group">
+                        <label>Day of Week (0-6)</label>
+                        <input type="number" id="day" value="3" min="0" max="6">
+                    </div>
+                    <div class="input-group">
+                        <label>Merchant Category (0-9)</label>
+                        <input type="number" id="merchant" value="2" min="0" max="9">
+                    </div>
+                    <div class="input-group">
+                        <label>Distance from Home (km)</label>
+                        <input type="number" id="distance" value="5.2" step="0.1">
+                    </div>
+                    <div class="input-group">
+                        <label>Daily Transaction Frequency</label>
+                        <input type="number" id="frequency" value="3" min="0">
+                    </div>
+                    <div class="input-group">
+                        <label>Account Age (days)</label>
+                        <input type="number" id="age" value="730">
+                    </div>
+                    <div class="input-group">
+                        <label>Account Balance ($)</label>
+                        <input type="number" id="balance" value="5000" step="0.01">
+                    </div>
+                </div>
+
+                <button onclick="predict()">🔍 Analyze Transaction</button>
+                <button onclick="randomTransaction()">🎲 Random Transaction</button>
+
+                <div id="predictionResult"></div>
+            </div>
+
+            <!-- Key Insights Tab -->
+            <div id="insights" class="tab-content">
+                <h2>Key Insights from Advanced EDA</h2>
+                
+                <div class="insight-box">
+                    <h3>🔍 Critical Discovery: Time-Based Fraud Patterns</h3>
+                    <p id="insight1">Generate data and train models to see insights...</p>
+                </div>
+
+                <div class="insight-box">
+                    <h3>💰 Amount-Based Risk Segmentation</h3>
+                    <p id="insight2">Generate data and train models to see insights...</p>
+                </div>
+
+                <div class="insight-box">
+                    <h3>📍 Geographic & Distance Anomalies</h3>
+                    <p id="insight3">Generate data and train models to see insights...</p>
+                </div>
+
+                <div class="insight-box">
+                    <h3>⚡ Velocity & Frequency Patterns</h3>
+                    <p id="insight4">Generate data and train models to see insights...</p>
+                </div>
+
+                <div class="insight-box">
+                    <h3>👤 Account Age & Maturity Analysis</h3>
+                    <p id="insight5">Generate data and train models to see insights...</p>
+                </div>
+
+                <div class="card">
+                    <h3>🎯 Model Selection Insights</h3>
+                    <div id="modelInsights">
+                        <p>Train models to see comparison insights...</p>
+                    </div>
+                </div>
+
+                <h3>Feature Importance Analysis</h3>
+                <div class="chart-container">
+                    <canvas id="featureImportanceChart"></canvas>
+                </div>
+
+                <div class="card">
+                    <h3>💼 Business Impact Summary</h3>
+                    <ul id="businessImpact">
+                        <li>Generate complete analysis to see business impact metrics</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
